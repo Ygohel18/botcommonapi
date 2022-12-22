@@ -1,10 +1,11 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const cookieParser = require("cookie-parser")
-const Instagram = require('./instagram.js')
+const bot = require('botcommon')
+// const Instagram = require('./instagram.js')
 const { head } = require('request')
 
-let instagram = new Instagram();
+let instagram = new bot.instagram();
 
 if (process.env.NODE_ENV !== 'production') {
     require('dotenv').config();
@@ -128,10 +129,10 @@ app.post('/ig/followers', (req, res) => {
     }
 
     (async () => {
-        if(data.query) {
-            res.send(await instagram.getFollowersByQuery(data.username,data.next,data.total));
+        if (data.query) {
+            res.send(await instagram.getFollowersByQuery(data.username, data.next, data.total));
         } else {
-            res.send(await instagram.getFollowers(data.username,data.next,data.total));
+            res.send(await instagram.getFollowers(data.username, data.next, data.total));
         }
     })();
 })
@@ -163,10 +164,10 @@ app.post('/ig/followings', (req, res) => {
     }
 
     (async () => {
-        if(data.query) {
-            res.send(await instagram.getFollowingsByQuery(data.username,data.next,data.total));
+        if (data.query) {
+            res.send(await instagram.getFollowingsByQuery(data.username, data.next, data.total));
         } else {
-            res.send(await instagram.getFollowings(data.username,data.next,data.total));
+            res.send(await instagram.getFollowings(data.username, data.next, data.total));
         }
     })();
 })
@@ -182,10 +183,10 @@ app.post('/ig/usermedia', (req, res) => {
     }
 
     (async () => {
-        if(data.query) {
-            res.send(await instagram.getUserMediaByQuery(data.username,data.next,data.total));
+        if (data.query) {
+            res.send(await instagram.getUserMediaByQuery(data.username, data.next, data.total));
         } else {
-            res.send(await instagram.getUserMedia(data.username,data.next,data.total));
+            res.send(await instagram.getUserMedia(data.username, data.next, data.total));
         }
     })();
 })
@@ -217,7 +218,7 @@ app.post('/ig/thread', (req, res) => {
     }
 
     (async () => {
-        var result = await instagram.getThread(data.limit, data.messageLimit,data.cursor);
+        var result = await instagram.getThread(data.limit, data.messageLimit, data.cursor);
         res.send(result);
     })();
 })
