@@ -1,11 +1,10 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const cookieParser = require("cookie-parser")
-const bot = require('botcommon')
-// const Instagram = require('./instagram.js')
+const Instagram = require('./instagram.js')
 const { head } = require('request')
 
-let instagram = new bot.instagram();
+let instagram = new Instagram();
 
 if (process.env.NODE_ENV !== 'production') {
     require('dotenv').config();
@@ -239,6 +238,41 @@ app.post('/ig/media', (req, res) => {
     })();
 })
 
+app.post('/ig/mediaonly', (req, res) => {
+   
+
+    const { data, config } = req.body;
+
+    if (req.header("Bot-Public") && process.env.LOCAL_SESSION == 1) {
+        setInstagramSession();
+    } else {
+        instagram.setHeaders(config.session.instagram.headers);
+    }
+
+    console.log(data.url);
+
+    (async () => {
+        var result = await instagram.getMediaOnly(data.url);
+        res.send(result);
+    })();
+})
+
+app.post('/ig/timeline', (req, res) => {
+
+    const { data, config } = req.body;
+
+    if (req.header("Bot-Public") && process.env.LOCAL_SESSION == 1) {
+        setInstagramSession();
+    } else {
+        instagram.setHeaders(config.session.instagram.headers);
+    }
+
+    (async () => {
+        var result = await instagram.getFeedTimelime(data.total,data.next);
+        res.send(result);
+    })();
+})
+
 console.log(`Running on port ${port}`)
 
 if (process.env.NODE_ENV == "production") {
@@ -246,4 +280,3 @@ if (process.env.NODE_ENV == "production") {
 } else {
     app.listen(port, () => { })
 }
-

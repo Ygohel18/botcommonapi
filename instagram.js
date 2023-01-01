@@ -232,6 +232,54 @@ class Instagram {
             return error;
         });
     }
+    
+    async getMediaOnly(shortcode) {
+
+        var result = await this.getMedia(shortcode);
+
+        if (result != null) {
+
+            var m = [];
+
+            for (var i = 0; i < result.items.length; i++) {
+
+                var media = result.items[i];
+
+                if (media.media_type == 1) {
+                    m.push(`${media.image_versions2.candidates[0].url}.jpg`);
+                }
+
+                if (media.media_type == 2) {
+                    m.push(`${media.video_versions[0].url}.mp4`);
+                }
+
+                if (media.media_type == 8) {
+                    for (var j = 0; j < media.carousel_media.length; j++) {
+                        if (media.carousel_media[j].media_type == 1) {
+                            m.push(`${media.carousel_media[j].image_versions2.candidates[0].url}.jpg`);
+                        }
+
+                        if (media.carousel_media[j].media_type == 2) {
+                            m.push(`${media.carousel_media[j].video_versions[0].url}.mp4`)
+                        }
+                    }
+                }
+
+                return m;
+            }
+        }else{
+            return [];
+        }
+    }
+
+    async getFeedTimelime(next, count) {
+        var url = (`https://i.instagram.com/api/v1/feed/timeline/` + "?count=" + count + "&max_id=" + next);
+        return axios(this.getConfig(url, 'post')).then(function (response) {
+            return response.data;
+        }).catch(function (error) {
+            return error;
+        });
+    }
 
     async getMediaId(url) {
         return urlMetadata(url).then(function (metadata) {
