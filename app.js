@@ -1,10 +1,12 @@
-const express = require('express')
-const bodyParser = require('body-parser')
-const cookieParser = require("cookie-parser")
-const Instagram = require('./instagram.js')
-const { head } = require('request')
+const express = require('express');
+const bodyParser = require('body-parser');
+const cookieParser = require("cookie-parser");
+const Instagram = require('./instagram.js');
+const { head } = require('request');
+const Youtube = require('./youtube.js');
 
 let instagram = new Instagram();
+let youtube = new Youtube();
 
 if (process.env.NODE_ENV !== 'production') {
     require('dotenv').config();
@@ -52,6 +54,23 @@ function unixTimestamp() {
         Date.now() / 1000
     )
 }
+
+app.post('/yt', (req, res) => {
+
+    const { data } = req.body;
+
+    (async () => {
+        try {
+            const url = await youtube.getVideo(data.url);
+            console.log(url);
+            res.send(url);
+        } catch (error) {
+            console.error(error.message);
+            res.send(error.message);
+        }
+    })();
+})
+
 
 app.post('/ig/profile', (req, res) => {
 
@@ -239,7 +258,7 @@ app.post('/ig/media', (req, res) => {
 })
 
 app.post('/ig/mediaonly', (req, res) => {
-   
+
 
     const { data, config } = req.body;
 
@@ -268,7 +287,7 @@ app.post('/ig/timeline', (req, res) => {
     }
 
     (async () => {
-        var result = await instagram.getFeedTimelime(data.total,data.next);
+        var result = await instagram.getFeedTimelime(data.total, data.next);
         res.send(result);
     })();
 })
